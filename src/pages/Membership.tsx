@@ -8,6 +8,8 @@ const Membership = () => {
     memberId: "RV-2024-0847",
     defaultOrder: "Flat White, Oat Milk",
     isNearby: true,
+    memberSince: '2021-06-15',
+    orderCount: 47,
   };
 
   return (
@@ -22,6 +24,8 @@ const Membership = () => {
           memberId={user.memberId}
           defaultOrder={user.defaultOrder}
           isNearby={user.isNearby}
+          memberSince={user.memberSince}
+          orderCount={user.orderCount}
         />
 
         <motion.div

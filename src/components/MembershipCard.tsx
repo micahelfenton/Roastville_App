@@ -7,11 +7,12 @@ interface MembershipCardProps {
   memberId: string;
   defaultOrder: string;
   isNearby: boolean;
+  memberSince?: string;
 }
 
 const baseColor = "#1B4D3E"; // Marrickville Green
 
-const MembershipCard = ({ name, tier, memberId, defaultOrder, isNearby }: MembershipCardProps) => {
+const MembershipCard = ({ name, tier, memberId, defaultOrder, isNearby, memberSince }: MembershipCardProps) => {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [shineX, setShineX] = useState(0);
   const [shineY, setShineY] = useState(0);
@@ -153,6 +154,9 @@ const MembershipCard = ({ name, tier, memberId, defaultOrder, isNearby }: Member
         <div className="relative z-10">
           <div className="mb-6">
             <h3 className="font-display text-2xl mt-1 leading-tight">{name}</h3>
+            {memberSince && (
+              <p className="text-[12px] opacity-70 mt-1">Member since {new Date(memberSince).toLocaleDateString()}</p>
+            )}
           </div>
 
           <div className="flex items-end justify-between">

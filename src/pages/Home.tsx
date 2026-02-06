@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import MembershipCard from "@/components/MembershipCard";
 import CoffeePlant from "@/components/CoffeePlant";
 import roastvilleBuilding from "@/assets/roastville-building.png";
 
@@ -11,24 +10,26 @@ const Home = () => {
     defaultOrder: "Flat White, Oat Milk",
     streakDays: 14,
     isNearby: true,
+    memberSince: '2021-06-15',
   };
 
   return (
     <div className="min-h-screen bg-background pb-24 pt-16">
       {/* Hero with Roastville building */}
-      <div className="relative h-44 overflow-hidden">
+      <div className="relative h-[42vh] sm:h-[52vh] md:h-[64vh] overflow-hidden">
         <img
           src={roastvilleBuilding}
           alt="Roastville Coffee Roasters"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
+          style={{ objectPosition: '50% 35%' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/50 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/6" />
         <div className="absolute bottom-4 left-5">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-sm text-muted-foreground"
+            className="text-sm text-white/90 drop-shadow-sm"
           >
             Good morning
           </motion.p>
@@ -36,7 +37,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="font-display text-2xl text-foreground"
+            className="font-display text-2xl text-white drop-shadow-md"
           >
             {user.name}
           </motion.h2>
@@ -44,13 +45,7 @@ const Home = () => {
       </div>
 
       <div className="px-5 space-y-6 mt-4">
-        <MembershipCard
-          name={user.name}
-          tier={user.tier}
-          memberId={user.memberId}
-          defaultOrder={user.defaultOrder}
-          isNearby={user.isNearby}
-        />
+        {/* Membership card moved to Membership page per design */}
 
         {user.isNearby && (
           <motion.button
