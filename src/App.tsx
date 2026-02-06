@@ -6,8 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import Home from "./pages/Home";
-import Menu from "./pages/Menu";
 import Community from "./pages/Community";
+import Rewards from "./pages/Rewards";
+import Membership from "./pages/Membership";
 import Profile from "./pages/Profile";
 import Staff from "./pages/Staff";
 import NotFound from "./pages/NotFound";
@@ -23,8 +24,9 @@ const App = () => (
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/menu" element={<Menu />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/rewards" element={<Rewards />} />
+          <Route path="/membership" element={<Membership />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="*" element={<NotFound />} />
