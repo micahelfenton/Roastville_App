@@ -17,7 +17,6 @@ const Membership = () => {
       <div className="px-5">
         <h2 className="font-display text-2xl text-foreground mb-1">Membership</h2>
         <p className="text-sm text-muted-foreground mb-6">Your Roastville card</p>
-
         <MembershipCard
           name={user.name}
           tier={user.tier}
@@ -27,6 +26,48 @@ const Membership = () => {
           memberSince={user.memberSince}
           orderCount={user.orderCount}
         />
+
+        <section className="mt-8">
+          <h3 className="font-display text-xl text-foreground mb-3">Choose a plan</h3>
+          <p className="text-sm text-muted-foreground mb-6">Pick the membership that fits your ritual.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[{
+              id: 'Seed',
+              name: 'Seed',
+              price: 55,
+              desc: 'Intro plan — perfect to start your ritual',
+            },{
+              id: 'Bloom',
+              name: 'Bloom',
+              price: 100,
+              desc: 'Most popular — extra perks and priority',
+            },{
+              id: 'Coffeeholic',
+              name: 'Coffeeholic',
+              price: 130,
+              desc: 'For the true aficionado — VIP benefits',
+            }].map((plan) => (
+              <div key={plan.id} className={`p-4 rounded-xl ${user.tier === plan.id ? 'border-2 border-primary bg-primary/6' : 'bg-card'} text-foreground`}>
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground uppercase tracking-wider">{plan.name}</p>
+                    <p className="font-display text-lg mt-1">${plan.price}/month</p>
+                  </div>
+                  {user.tier === plan.id && (
+                    <span className="text-xs px-2 py-1 rounded-full bg-primary text-primary-foreground">Current</span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">{plan.desc}</p>
+                <div className="flex gap-2">
+                  <button className={`flex-1 py-2 rounded-lg font-medium ${user.tier === plan.id ? 'opacity-70 cursor-default' : 'bg-primary text-primary-foreground'}`}>
+                    {user.tier === plan.id ? 'Your plan' : 'Select'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <motion.div
           initial={{ opacity: 0 }}
