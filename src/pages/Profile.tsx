@@ -16,7 +16,6 @@ const Profile = () => {
     { label: "Subscription & Plan", detail: `Bloom — ${user.plan}` },
     { label: "Default Order", detail: "Flat White, Oat Milk" },
     { label: "Notification Preferences", detail: "" },
-    { label: "Geofence Settings", detail: "500m radius" },
     { label: "Payment Method", detail: "•••• 4242" },
   ];
 
