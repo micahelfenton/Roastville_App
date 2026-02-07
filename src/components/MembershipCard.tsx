@@ -57,8 +57,8 @@ const MembershipCard = ({ name, tier, memberId, defaultOrder, isNearby, memberSi
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45 }}
-      whileHover={{ scale: 1.02, y: -6 }}
-      className="relative rounded-2xl transform-gpu will-change-transform"
+      whileHover={{ scale: 1.03, y: -6 }}
+      className="relative mx-auto w-[340px] sm:w-[420px] h-[220px] rounded-2xl transform-gpu will-change-transform"
     >
       {/* Roastmaster gold pulse behind card */}
       {tier === "Roastmaster" && (
@@ -67,17 +67,32 @@ const MembershipCard = ({ name, tier, memberId, defaultOrder, isNearby, memberSi
         </div>
       )}
 
+      {/* Gold glow aura for Bloom tier */}
+      {tier === 'Bloom' && (
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <motion.div
+            animate={{ opacity: [0.08, 0.15, 0.08] }}
+            transition={{ repeat: Infinity, repeatType: 'loop', duration: 4, ease: 'easeInOut' }}
+            className="absolute inset-0 rounded-2xl"
+            style={{
+              background: 'radial-gradient(ellipse 90% 80% at 50% 50%, rgba(212,175,55,0.2), transparent 70%)',
+              filter: 'blur(16px)',
+            }}
+          />
+        </div>
+      )}
+
       <div
         ref={cardRef}
-        className={`relative overflow-hidden rounded-2xl p-6 text-white`} 
+        className={`relative overflow-hidden rounded-2xl h-full p-4 text-white flex flex-col justify-between`} 
         style={{
           backgroundColor: baseColor,
           // layered background: subtle gradient + brushed metal overlay
           backgroundImage: `linear-gradient(135deg, ${baseColor}, #165c43), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, rgba(0,0,0,0.02) 1px 3px)`,
           backgroundBlendMode: 'overlay, overlay',
-          boxShadow: '0 12px 36px rgba(6,44,28,0.18)',
+          boxShadow: '0 12px 36px rgba(6,44,28,0.22)',
           borderRadius: 18,
-          border: tier === 'Bloom' ? '1px solid #C0C0C0' : tier === 'Roastmaster' ? '1px solid #D4AF37' : '1px solid rgba(255,255,255,0.04)',
+          border: tier === 'Bloom' ? '1.5px solid #D4AF37' : tier === 'Roastmaster' ? '2px solid #D4AF37' : '1px solid rgba(255,255,255,0.04)',
           ...commonStyles,
         }}
       >
@@ -90,10 +105,10 @@ const MembershipCard = ({ name, tier, memberId, defaultOrder, isNearby, memberSi
           transition={{ repeat: Infinity, repeatType: 'loop', duration: 3.2, ease: 'linear' }}
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(184,243,214,0.28) 45%, rgba(255,255,255,0.45) 50%, rgba(184,243,214,0.28) 55%, rgba(255,255,255,0) 100%)',
+            background: tier === 'Bloom' ? 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(212,175,55,0.25) 35%, rgba(255,255,255,0.4) 50%, rgba(212,175,55,0.25) 65%, rgba(255,255,255,0) 100%)' : 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(184,243,214,0.28) 45%, rgba(255,255,255,0.45) 50%, rgba(184,243,214,0.28) 55%, rgba(255,255,255,0) 100%)',
             transform: 'skewX(-18deg)',
             filter: 'blur(10px)',
-            opacity: 0.28,
+            opacity: 0.32,
             mixBlendMode: 'screen' as any,
           }}
         />
@@ -137,14 +152,18 @@ const MembershipCard = ({ name, tier, memberId, defaultOrder, isNearby, memberSi
         {/* Subtle Roastville text watermark (Playfair Display) centered behind content */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
           <span
-            className="font-display text-[88px] sm:text-[110px]"
+            className="font-display text-[48px] sm:text-[64px]"
             style={{
-              color: 'rgba(255,255,255,0.10)',
-              opacity: 1,
-              transform: 'scale(1.08) rotate(-6deg)',
+              background: 'linear-gradient(135deg, #D4AF37, #E8D4A8, #C9A961)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              opacity: 0.22,
+              transform: 'scale(1.02) rotate(-6deg)',
               letterSpacing: '-0.02em',
               fontFamily: "ms'i ink, 'Playfair Display', serif",
-              textShadow: '0 2px 8px rgba(0,0,0,0.12)'
+              textShadow: '0 1px 6px rgba(0,0,0,0.12)',
+              filter: 'drop-shadow(0 1px 3px rgba(212,175,55,0.12))'
             }}
           >
             Roastville
