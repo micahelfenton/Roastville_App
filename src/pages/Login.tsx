@@ -31,8 +31,35 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 md:p-6 green-brick-bg relative">
+      {/* Roastville Watermark - Text on Left Side */}
+      <div className="brick-watermark-left">
+        <div className="brick-watermark-text">
+          <span>ROASTVILLE</span>
+          <span>COFFEE</span>
+          <span>ROASTERS</span>
+        </div>
+      </div>
+      
+      {/* Roastville Watermark - Coffee Cup on Right Side */}
+      <div className="brick-watermark-right">
+        <div className="brick-watermark-cup">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            {/* Coffee Cup Outline */}
+            <path d="M 50 80 L 60 160 Q 100 170 140 160 L 150 80 Z" />
+            {/* Cup Handle */}
+            <path d="M 150 100 Q 170 100 170 120 Q 170 140 150 140" fill="none" />
+            {/* Coffee Level */}
+            <path d="M 55 95 L 62 150 Q 100 158 138 150 L 145 95 Z" opacity="0.3" />
+            {/* Steam Lines (animated) */}
+            <path className="watermark-steam" d="M 75 70 Q 70 50 75 30" />
+            <path className="watermark-steam" d="M 100 65 Q 100 45 105 25" />
+            <path className="watermark-steam" d="M 125 70 Q 130 50 125 30" />
+          </svg>
+        </div>
+      </div>
+      
       {/* Atmospheric coffee steam */}
-      <div className="absolute inset-0 pointer-events-none opacity-20">
+      <div className="absolute inset-0 pointer-events-none opacity-20 z-5">
         <div className="coffee-steam-1"></div>
         <div className="coffee-steam-2"></div>
         <div className="coffee-steam-3"></div>

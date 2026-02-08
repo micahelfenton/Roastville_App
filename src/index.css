@@ -235,9 +235,9 @@
 }
 
 /* ============================================
-   ROASTVILLE - SIMPLE BRICK WALL PATTERN
-   Pure CSS using repeating-linear-gradient
+   ROASTVILLE - BRICK WALL WITH WATERMARK
    Add this to the bottom of src/index.css
+   (REPLACE the previous green-brick-bg section)
    ============================================ */
 
 /* Roastville Green Brick Wall */
@@ -269,6 +269,7 @@
   background-repeat: repeat;
   width: 100%;
   min-height: 100vh;
+  position: relative;
 }
 
 /* Add subtle texture overlay for realism */
@@ -282,6 +283,7 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
   opacity: 0.5;
   pointer-events: none;
+  z-index: 1;
 }
 
 /* Add horizontal mortar lines for more definition */
@@ -300,6 +302,152 @@
     #0d3d25 60px
   );
   pointer-events: none;
+  z-index: 1;
+}
+
+/* ROASTVILLE WATERMARK - Text on Left, Coffee on Right */
+.brick-watermark-left {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%) rotate(-15deg);
+  z-index: 2;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.brick-watermark-right {
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%) rotate(-15deg);
+  z-index: 2;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.brick-watermark-text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 5.5rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: #f5f1e8;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.brick-watermark-text span {
+  display: block;
+}
+
+/* SVG Coffee Cup with Steam */
+.brick-watermark-cup {
+  width: 300px;
+  height: 300px;
+}
+
+.brick-watermark-cup svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #f5f1e8;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Animate steam rising */
+.watermark-steam {
+  animation: steam-float 4s ease-in-out infinite;
+}
+
+.watermark-steam:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.watermark-steam:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes steam-float {
+  0%, 100% {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translateY(-10px);
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) {
+  .brick-watermark-left {
+    left: 2%;
+  }
+  
+  .brick-watermark-right {
+    right: 2%;
+  }
+  
+  .brick-watermark-text {
+    font-size: 4rem;
+  }
+  
+  .brick-watermark-cup {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .brick-watermark-left,
+  .brick-watermark-right {
+    opacity: 0.08;
+  }
+  
+  .brick-watermark-left {
+    left: -5%;
+  }
+  
+  .brick-watermark-right {
+    right: -5%;
+  }
+  
+  .brick-watermark-text {
+    font-size: 2.5rem;
+  }
+  
+  .brick-watermark-cup {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brick-watermark-text {
+    font-size: 1.8rem;
+    gap: 0.25rem;
+  }
+  
+  .brick-watermark-cup {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .brick-watermark-left {
+    left: -10%;
+  }
+  
+  .brick-watermark-right {
+    right: -10%;
+  }
 }
 
 /* Premium Glassmorphism Card */
@@ -317,6 +465,8 @@
     0 2px 8px 0 rgba(0, 0, 0, 0.2),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 10;
 }
 
 .glass-card:hover {
@@ -454,7 +604,8 @@
   .coffee-steam-1,
   .coffee-steam-2,
   .coffee-steam-3,
-  .glass-card {
+  .glass-card,
+  .watermark-steam {
     animation: none !important;
     transition: none !important;
   }
