@@ -31,7 +31,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 md:p-6 green-brick-bg relative">
-      {/* Roastville Watermark - Text on Left Side */}
+      {/* Roastville Watermark - Text on Left Side (Desktop only) */}
       <div className="brick-watermark-left">
         <div className="brick-watermark-text">
           <span>ROASTVILLE</span>
@@ -40,7 +40,7 @@ const Login: React.FC = () => {
         </div>
       </div>
       
-      {/* Roastville Watermark - Coffee Cup on Right Side */}
+      {/* Roastville Watermark - Coffee Cup on Right Side (Desktop only) */}
       <div className="brick-watermark-right">
         <div className="brick-watermark-cup">
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -55,6 +55,15 @@ const Login: React.FC = () => {
             <path className="watermark-steam" d="M 100 65 Q 100 45 105 25" />
             <path className="watermark-steam" d="M 125 70 Q 130 50 125 30" />
           </svg>
+        </div>
+      </div>
+      
+      {/* Centered Watermark for Mobile */}
+      <div className="brick-watermark-center" style={{ display: 'none' }}>
+        <div className="brick-watermark-text">
+          <span>ROASTVILLE</span>
+          <span>COFFEE</span>
+          <span>ROASTERS</span>
         </div>
       </div>
       

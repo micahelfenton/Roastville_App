@@ -385,75 +385,53 @@
   }
 }
 
-/* Tablet adjustments */
-@media (max-width: 1024px) {
+/* Desktop/Tablet - Full watermarks on sides */
+@media (min-width: 769px) {
   .brick-watermark-left {
-    left: 2%;
+    display: block;
   }
   
   .brick-watermark-right {
-    right: 2%;
-  }
-  
-  .brick-watermark-text {
-    font-size: 4rem;
-  }
-  
-  .brick-watermark-cup {
-    width: 220px;
-    height: 220px;
+    display: block;
   }
 }
 
-/* Mobile adjustments */
+/* Mobile - Center single watermark behind card */
 @media (max-width: 768px) {
-  .brick-watermark-left,
-  .brick-watermark-right {
-    opacity: 0.20; /* Increased from 0.08 */
-  }
-  
+  /* Hide the side watermarks on mobile */
   .brick-watermark-left {
-    left: -15%; /* More visible on left */
-    transform: translateY(-50%) rotate(-20deg); /* Slightly more diagonal */
+    display: none;
   }
   
   .brick-watermark-right {
-    right: -15%; /* More visible on right */
-    transform: translateY(-50%) rotate(-20deg);
+    display: none;
   }
   
-  .brick-watermark-text {
-    font-size: 3rem; /* Bigger on mobile */
+  /* Show centered watermark instead */
+  .brick-watermark-center {
+    display: block !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    z-index: 2;
+    opacity: 0.08;
+    pointer-events: none;
   }
   
-  .brick-watermark-cup {
-    width: 180px; /* Bigger cup */
-    height: 180px;
+  .brick-watermark-center .brick-watermark-text {
+    font-size: 3rem;
+    text-align: center;
+  }
+  
+  .brick-watermark-center .brick-watermark-cup {
+    display: none; /* Hide cup on mobile for cleaner look */
   }
 }
 
 @media (max-width: 480px) {
-  .brick-watermark-left,
-  .brick-watermark-right {
-    opacity: 0.18; /* Still visible */
-  }
-  
-  .brick-watermark-text {
-    font-size: 2.2rem; /* Bigger than before */
-    gap: 0.3rem;
-  }
-  
-  .brick-watermark-cup {
-    width: 130px; /* Bigger cup */
-    height: 130px;
-  }
-  
-  .brick-watermark-left {
-    left: -20%; /* Peek out more */
-  }
-  
-  .brick-watermark-right {
-    right: -20%; /* Peek out more */
+  .brick-watermark-center .brick-watermark-text {
+    font-size: 2.2rem;
   }
 }
 
