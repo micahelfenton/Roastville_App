@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import Staff from "./pages/Staff";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import Register from "./pages/Register"; // Add after Login import
 import Account from "./pages/Account";
 import { AuthProvider, useAuth } from "./lib/AuthContext";
 
@@ -41,7 +42,7 @@ const App = () => {
               <Route path="/membership" element={<Membership />} />
               <Route path="/account" element={<Account />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Navigate to="/" replace />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/staff" element={<Staff />} />
               <Route path="/auth-check" element={<RootRedirect />} />

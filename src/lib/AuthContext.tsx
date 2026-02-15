@@ -1,22 +1,22 @@
+// src/lib/AuthContext.tsx
+// Updated with REAL Supabase authentication
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase, Profile } from "./supabase";
+import { Session } from "@supabase/supabase-js";
 
-type User = {
-  id?: string;
-  name?: string;
+type User = Profile & {
   email?: string;
-  tier?: string;
-  memberSince?: string;
-  orderCount?: number;
 };
 
 type AuthContextValue = {
   user: User | null;
-  accessToken: string | null;
+  session: Session | null;
   loading: boolean;
   login: (email: string, password: string, remember?: boolean) => Promise<boolean>;
+  signup: (email: string, password: string, fullName: string, shopCode: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
-  refresh: () => Promise<boolean>;
   setUser: (u: User | null) => void;
 };
 
@@ -24,94 +24,182 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Try refresh on mount (server should read httpOnly refresh cookie)
+  // Listen for auth state changes
   useEffect(() => {
-    (async () => {
-      try {
-        await refresh();
-      } catch (e) {
-        // ignore
-      } finally {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      } else {
         setLoading(false);
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      if (session?.user) {
+        await loadUserProfile(session.user.id);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
+  // Load user profile from database
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+
+      // Get user email from auth
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+
+      setUser({
+        ...profile,
+        email: authUser?.email,
+      });
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // LOGIN function
   const login = async (email: string, password: string, remember = false) => {
     try {
-      // Demo credentials for testing
-      if (email === "demo@roastville.com" && password === "demo123") {
-        const dummyUser: User = {
-          id: "1",
-          name: "Demo User",
-          email: "demo@roastville.com",
-          tier: "Bloom",
-          memberSince: "2024-01-15",
-          orderCount: 8,
-        };
-        setAccessToken("demo-token-" + Date.now());
-        setUser(dummyUser);
-        try {
-          if (remember) localStorage.setItem("rv_remember", "1");
-        } catch (e) {
-          // ignore storage errors
-        }
-        return true;
+      // Sign in with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password,
+      });
+
+      if (error) {
+        console.error('Login error:', error.message);
+        return false;
       }
 
-      const res = await fetch(`/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!res.ok) return false;
-      const data = await res.json();
-      setAccessToken(data.accessToken ?? null);
-      setUser(data.user ?? null);
-      try {
-        if (remember) localStorage.setItem("rv_remember", "1");
-      } catch (e) {
-        // ignore storage errors
-      }
+      // Profile will be loaded automatically by onAuthStateChange listener
       return true;
     } catch (err) {
+      console.error('Login exception:', err);
       return false;
     }
   };
 
-  const refresh = async () => {
+  // SIGNUP function
+  const signup = async (
+    email: string, 
+    password: string, 
+    fullName: string, 
+    shopCode: string
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
-      // always include credentials so httpOnly refresh cookie can be used
-      const res = await fetch(`/api/auth/refresh`, { method: "POST", credentials: "include" });
-      if (!res.ok) return false;
-      const data = await res.json();
-      setAccessToken(data.accessToken ?? null);
-      setUser(data.user ?? null);
-      return true;
-    } catch (e) {
-      return false;
+      // 1. Verify shop code exists
+      const { data: tenant, error: tenantError } = await supabase
+        .from('tenants')
+        .select('id')
+        .eq('shop_code', shopCode.toUpperCase())
+        .eq('is_active', true)
+        .single();
+
+      if (tenantError || !tenant) {
+        return { 
+          success: false, 
+          error: 'Invalid shop code. Please check with your coffee shop.' 
+        };
+      }
+
+      // 2. Create auth user
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      });
+
+      if (signUpError) {
+        return { success: false, error: signUpError.message };
+      }
+
+      if (!authData.user) {
+        return { success: false, error: 'Failed to create account' };
+      }
+
+      // 3. Create profile (this should happen automatically via trigger, but we'll ensure it)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          tenant_id: tenant.id,
+          full_name: fullName,
+          tier: 'free',
+        });
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Continue anyway - profile might already exist from trigger
+      }
+
+      // 4. Generate referral code for new user
+      const referralCode = `${fullName.substring(0, 3).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      
+      await supabase
+        .from('referrals')
+        .insert({
+          tenant_id: tenant.id,
+          referrer_id: authData.user.id,
+          referral_code: referralCode,
+          status: 'pending',
+        });
+
+      return { success: true };
+    } catch (err: any) {
+      console.error('Signup exception:', err);
+      return { success: false, error: err.message || 'An error occurred during signup' };
     }
   };
 
+  // LOGOUT function
   const logout = async () => {
     try {
-      await fetch(`/api/auth/logout`, { method: "POST", credentials: "include" });
-    } catch (e) {
-      // noop
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+    } catch (error) {
+      console.error('Logout error:', error);
     }
-    setAccessToken(null);
-    setUser(null);
-    try {
-      localStorage.removeItem("rv_remember");
-    } catch (e) {}
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, accessToken, loading, login, logout, refresh }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      loading, 
+      login, 
+      signup, 
+      logout, 
+      setUser 
+    }}>
       {children}
     </AuthContext.Provider>
   );
